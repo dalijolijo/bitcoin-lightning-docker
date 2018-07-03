@@ -1,0 +1,14 @@
+FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.7
+
+RUN apk add --update \
+    python \
+    python-dev \
+    py-pip \
+    build-base \
+  && pip install virtualenv \
+  && rm -rf /var/cache/apk/*
+
+COPY requirements.txt /
+RUN pip install -r /requirements.txt
+
+COPY ./app /app

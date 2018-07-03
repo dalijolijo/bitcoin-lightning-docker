@@ -1,0 +1,76 @@
+{% extends 'admin/master.html' %}
+
+{% import 'definition_list_macro.html' as data %}
+
+{% block body %}
+    <script type="text/javascript" charset="utf-8">
+        var socket = new WebSocket("ws://" + document.domain + ':' + {{ websocket_port }});
+
+        socket.onmessage = function (event) {
+            if (event.data === "ping") {
+                socket.send("pong");
+                return;
+            }
+            console.log(event.data);
+            var data = JSON.parse(event.data);
+            if (data.type === "update_tip") {
+                var progress = parseFloat(data.data.progress);
+                progress *= 10000;
+                progress = Math.round(progress);
+                document.getElementById("progress-bar").setAttribute("aria-valuenow", progress);
+                document.getElementById("progress-bar").style.width = (progress / 100).toString() + "%";
+                document.getElementById("progress-bar").innerText = "Blockchain sync " + (progress / 100).toString() + "%";
+            }
+        }
+    </script>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-10">
+                {{ data.definition_list(title='Receive coins', data_dict=new_address) }}
+
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-10">
+                {{ data.definition_list(title='Wallet Info', data_dict=wallet_info) }}
+
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-10">
+                {{ data.definition_list(title='Blockchain Info', data_dict=blockchain_info) }}
+
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-5">
+                {{ data.definition_list(title='Mempool Info', data_dict=mempool_info) }}
+            </div>
+            <div class="col-md-5">
+                <div class="progress">
+                    <div id="progress-bar" class="progress-bar"
+                         role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                         aria-valuemax="10000" style="width: 0%;">
+                        Waiting for websocket connection...
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+{% endblock %}

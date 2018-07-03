@@ -1,0 +1,25 @@
+{% macro table(title, data, sort_key) %}
+    <table class="table table-hover">
+    <caption>{{ title }}</caption>
+        <thead>
+        <tr>
+            {% for key in data[0].keys()|sort %}
+                <th>
+                    {{ key }}
+                </th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in data|sort(attribute=sort_key) %}
+            <tr>
+                {% for key in item.keys()|sort %}
+                    <td>
+                        {{ item[key] }}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{%- endmacro %}
