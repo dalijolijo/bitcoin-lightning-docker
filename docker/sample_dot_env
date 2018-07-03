@@ -1,0 +1,19 @@
+COMPOSE_PROJECT_NAME=bitcoin_lightning_docker
+
+RPCUSER=YOUR_USER
+RPCPASSWORD=YOUR_PASSWORD
+# see https://github.com/ruimarinho/docker-bitcoin-core#using-rpcauth-for-remote-authentication
+RPCAUTH=YOUR_AUTH
+
+TESTNET=1
+DEBUG=0
+TXINDEX=1
+
+WEBSOCKET_HOST=logging_service
+WEBSOCKET_PORT=8765
+
+NETWORK=testnet
+CHAIN=bitcoin
+DEBUGLEVEL=debug
+BITCOIN_NODE=bitcoind
+ZMQ_PATH=tcp://bitcoind:28332

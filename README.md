@@ -1,8 +1,12 @@
 Quick Start Guide
 
-1. `cd docker && docker-compose up`
+1. `cp docker/sample_dot_env docker/.env` 
 
-2. [http://127.0.0.1:5000/admin/](http://127.0.0.1:5000/admin/)
+2. update `docker/.env` with you bitcoind rpc auth
+
+2. `cd docker && docker-compose up`
+
+3. [http://127.0.0.1:5000/admin/](http://127.0.0.1:5000/admin/)
 
 
 
