@@ -25,42 +25,6 @@ services:
      - "28332:28332"
      - "18332:18332"
 
-  bitcoind_logging_service:
-    image: bitcoind_logging_service
-    container_name: bitcoind_logging_service
-    build:
-      context: ../services/logging
-      dockerfile: ${PWD}/services/logging/Dockerfile
-    environment:
-      - WEBSOCKET_PORT=${WEBSOCKET_PORT}
-      - WEBSOCKET_HOST=${WEBSOCKET_HOST}
-    volumes:
-      - ${PWD}/data:/home/bitcoin/.bitcoin:ro
-      - ${PWD}/lnd_data:/root/.lnd:ro
-    ports:
-     - "${WEBSOCKET_PORT}:${WEBSOCKET_PORT}"
-
-  bitcoind_admin_website_service:
-    image: bitcoind_admin_website_service
-    container_name: bitcoind_admin_website_service
-    build:
-      context: ../services/admin_website
-      dockerfile: ${PWD}/services/admin_website/Dockerfile
-    environment:
-      - WEBSOCKET_PORT=${WEBSOCKET_PORT}
-      - WEBSOCKET_HOST=${WEBSOCKET_HOST}
-      - BITCOIND_RPC_HOST=bitcoind
-      - BITCOIND_RPC_USER=${RPCUSER}
-      - BITCOIND_RPC_PASSWORD=${RPCPASSWORD}
-      - TESTNET=${TESTNET}
-      - LND_RPC_URI=lnd:10009
-      - LND_PEER_URI=lnd:9735
-    volumes:
-      - ${PWD}/data:/home/bitcoin/.bitcoin
-      - ${PWD}/lnd_data:/root/.lnd
-    ports:
-     - "5000:80"
-
   lnd:
     image: lnd
     container_name: lnd
@@ -85,3 +49,39 @@ services:
      - "10009:10009" # RPC
      - "8080:8080"   # REST
      - "9735:9735"   # p2p
+
+  bitcoind_admin_website_service:
+    image: bitcoind_admin_website_service
+    container_name: bitcoind_admin_website_service
+    build:
+      context: ../services/admin_website
+      dockerfile: ${PWD}/services/admin_website/Dockerfile
+    environment:
+      - WEBSOCKET_PORT=${WEBSOCKET_PORT}
+      - WEBSOCKET_HOST=${WEBSOCKET_HOST}
+      - BITCOIND_RPC_HOST=bitcoind
+      - BITCOIND_RPC_USER=${RPCUSER}
+      - BITCOIND_RPC_PASSWORD=${RPCPASSWORD}
+      - TESTNET=${TESTNET}
+      - LND_RPC_URI=lnd:10009
+      - LND_PEER_URI=lnd:9735
+    volumes:
+      - ${PWD}/data:/home/bitcoin/.bitcoin
+      - ${PWD}/lnd_data:/root/.lnd
+    ports:
+     - "5000:80"
+
+  logging_service:
+    image: logging_service
+    container_name: logging_service
+    build:
+      context: ../services/logging
+      dockerfile: ${PWD}/services/logging/Dockerfile
+    environment:
+      - WEBSOCKET_PORT=${WEBSOCKET_PORT}
+      - WEBSOCKET_HOST=${WEBSOCKET_HOST}
+    volumes:
+      - ${PWD}/data:/home/bitcoin/.bitcoin:ro
+      - ${PWD}/lnd_data:/root/.lnd:ro
+    ports:
+     - "${WEBSOCKET_PORT}:${WEBSOCKET_PORT}"
