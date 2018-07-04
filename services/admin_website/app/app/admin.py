@@ -7,10 +7,13 @@ from flask_admin import Admin, AdminIndexView, expose, BaseView
 from google.protobuf.json_format import MessageToDict
 from markupsafe import Markup
 
+from app.lnd_client.admin.lnd_model_view import LNDModelView
+from app.lnd_client.grpc_generated.rpc_pb2 import Channel, Peer
 from app.lnd_client.lightning_client import LightningClient
 
 if os.environ.get('TESTNET', 1):
     bitcoin.SelectParams('testnet')
+
 
 class BlockchainView(AdminIndexView):
     @expose('/')
@@ -32,7 +35,6 @@ class BlockchainView(AdminIndexView):
         except Exception as exc:
             wallet_info = {'Error': str(exc)}
 
-
         try:
             new_address = {
                 'bech32': proxy.call('getnewaddress', '', 'bech32'),
@@ -41,7 +43,8 @@ class BlockchainView(AdminIndexView):
             }
             if blockchain_info['chain'] == 'test':
                 testnet_faucet = 'https://testnet.coinfaucet.eu/'
-                new_address['Get testnet coins'] = Markup(f'<a target="_blank" href="{testnet_faucet}">{testnet_faucet}</a>')
+                new_address['Get testnet coins'] = Markup(
+                    f'<a target="_blank" href="{testnet_faucet}">{testnet_faucet}</a>')
         except Exception as exc:
             new_address = {'Error': str(exc)}
 
@@ -54,12 +57,12 @@ class BlockchainView(AdminIndexView):
                            new_address=new_address
                            )
 
-class LightningView(BaseView):
+
+class LightningDashboardView(BaseView):
     @expose('/')
     def index(self):
         rpc_uri = os.environ.get('LND_RPC_URI', '127.0.0.1:10009')
         peer_uri = os.environ.get('LND_PEER_URI', '127.0.0.1:9735')
-        print(rpc_uri, peer_uri)
         ln = LightningClient(rpc_uri=rpc_uri, peer_uri=peer_uri)
 
         try:
@@ -67,7 +70,6 @@ class LightningView(BaseView):
             lnd_info = MessageToDict(lnd_info)
         except Exception as exc:
             lnd_info = {'Error': ' '.join([str(type(exc)), str(exc)])}
-
 
         try:
             peers = ln.get_peers()
@@ -85,10 +87,11 @@ class LightningView(BaseView):
         except Exception as exc:
             channels = {'Error': ' '.join([str(type(exc)), str(exc)])}
 
-        return self.render('admin/lnd_home.html',
+        return self.render('admin/lnd_dashboard.html',
                            lnd_info=lnd_info,
                            peers=peers,
                            channels=channels)
+
 
 def create_app():
     app = Flask(__name__)
@@ -99,11 +102,22 @@ def create_app():
                   index_view=BlockchainView(name='Bitcoin')
                   )
     app.config['FLASK_ADMIN_FLUID_LAYOUT'] = True
+
     @app.route('/')
     def index():
         return redirect('/admin')
 
-    admin.add_view(LightningView(name='Lightning', endpoint='lightning'))
+    admin.add_view(LightningDashboardView(name='Dashboard',
+                                          endpoint='lightning',
+                                          category='LND'))
+
+    admin.add_view(LNDModelView(Peer,
+                                 name='Peers',
+                                 category='LND'))
+
+    admin.add_view(LNDModelView(Channel,
+                                    name='Channels',
+                                    category='LND'))
 
     with open('bitcoin.conf', 'w') as conf_file:
         lines = [
