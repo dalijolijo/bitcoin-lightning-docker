@@ -1,5 +1,7 @@
 import os
+import string
 from pprint import pformat
+import random
 
 import bitcoin.rpc
 from flask import Flask, redirect
@@ -7,7 +9,9 @@ from flask_admin import Admin, AdminIndexView, expose, BaseView
 from google.protobuf.json_format import MessageToDict
 from markupsafe import Markup
 
+from app.lnd_client.admin.channels_model_view import ChannelsModelView
 from app.lnd_client.admin.lnd_model_view import LNDModelView
+from app.lnd_client.admin.peers_model_view import PeersModelView
 from app.lnd_client.grpc_generated.rpc_pb2 import Channel, Peer
 from app.lnd_client.lightning_client import LightningClient
 
@@ -102,6 +106,12 @@ def create_app():
                   index_view=BlockchainView(name='Bitcoin')
                   )
     app.config['FLASK_ADMIN_FLUID_LAYOUT'] = True
+    secret_key = os.environ.get('FLASK_SECRET_KEY')
+    if secret_key is None:
+        secret_key = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
+        os.environ['FLASK_SECRET_KEY'] = secret_key
+    app.config['SECRET_KEY'] = secret_key
+
 
     @app.route('/')
     def index():
@@ -111,11 +121,11 @@ def create_app():
                                           endpoint='lightning',
                                           category='LND'))
 
-    admin.add_view(LNDModelView(Peer,
-                                 name='Peers',
-                                 category='LND'))
+    admin.add_view(PeersModelView(Peer,
+                                  name='Peers',
+                                  category='LND'))
 
-    admin.add_view(LNDModelView(Channel,
+    admin.add_view(ChannelsModelView(Channel,
                                     name='Channels',
                                     category='LND'))
 
