@@ -5,25 +5,29 @@
 
 {% block body %}
 
-        <div class="row">
-            <div class="col-md-1">
-            </div>
-            <div class="col-md-10">
-                {{ dl.definition_list(title='Info', data_dict=lnd_info) }}
-            </div>
-            <div class="col-md-1"></div>
+    <div class="row">
+        <div class="col-md-1">
         </div>
+        <div class="col-md-10">
+            {{ dl.definition_list(title='Info', data_dict=lnd_info) }}
+        </div>
+        <div class="col-md-1"></div>
+    </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                {{ t.table(title='Peers', data=peers, sort_key='address') }}
-            </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            {{ t.table(title='Peers', data=peers, sort_key='address') }}
         </div>
+        <div class="col-md-1"></div>
+    </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                {{ t.table(title='Channels', data=channels, sort_key='chan_id') }}
-            </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            {{ dl.list_of_definition_lists(title='Channels', title_key='chan_id', data=channels) }}
         </div>
+        <div class="col-md-1"></div>
+    </div>
 
 {% endblock %}
