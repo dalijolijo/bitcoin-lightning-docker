@@ -86,8 +86,9 @@ class LNDModelView(BaseModelView):
             description = description.get('title') or description.get('description')
             if description:
                 description = description.replace('/ ', '')
-            form_field = FormClass(field.name, default=field.default_value,
-                                   description=description)
+            form_field = FormClass(field.name, default=field.default_value or None,
+                                   description=description,
+                                   )
             setattr(NewForm, field.name, form_field)
         return NewForm
 
