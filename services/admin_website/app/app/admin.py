@@ -7,8 +7,8 @@ from flask_admin import Admin, AdminIndexView, expose, BaseView
 from google.protobuf.json_format import MessageToDict
 from markupsafe import Markup
 
-from app.lnd_client.admin.channels import ChannelModelView
-from app.lnd_client.grpc_generated.rpc_pb2 import Channel
+from app.lnd_client.admin.lnd_model_view import LNDModelView
+from app.lnd_client.grpc_generated.rpc_pb2 import Channel, Peer
 from app.lnd_client.lightning_client import LightningClient
 
 if os.environ.get('TESTNET', 1):
@@ -111,7 +111,11 @@ def create_app():
                                           endpoint='lightning',
                                           category='LND'))
 
-    admin.add_view(ChannelModelView(Channel,
+    admin.add_view(LNDModelView(Peer,
+                                 name='Peers',
+                                 category='LND'))
+
+    admin.add_view(LNDModelView(Channel,
                                     name='Channels',
                                     category='LND'))
 
