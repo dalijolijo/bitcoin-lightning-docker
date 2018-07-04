@@ -2,12 +2,19 @@ from collections import namedtuple
 import os
 
 from flask_admin.model import BaseModelView
-from wtforms import Form
+from wtforms import Form, StringField, IntegerField, BooleanField
 
 from app.lnd_client.grpc_generated.rpc_pb2 import Peer, Channel
 from app.lnd_client.lightning_client import LightningClient
 
 LND_Model = namedtuple('LND_Model', ['get_query', 'primary_key'])
+
+wtforms_type_map = {
+    bytes: StringField,
+    str: StringField,
+    int: IntegerField,
+    bool: BooleanField
+}
 
 class LNDModelView(BaseModelView):
 
@@ -21,6 +28,8 @@ class LNDModelView(BaseModelView):
         Peer: LND_Model(get_query='get_peers', primary_key='pub_key'),
         Channel: LND_Model(get_query='get_channels', primary_key='chan_id')
     }
+
+    create_form_class = None
 
     can_view_details = True
     details_modal = True
@@ -56,10 +65,19 @@ class LNDModelView(BaseModelView):
         return NotImplementedError()
 
     def scaffold_form(self):
-        class MyForm(Form):
+        class NewForm(Form):
             pass
+        if self.create_form_class is None:
+            return NewForm
 
-        return MyForm
+        for field in self.create_form_class.DESCRIPTOR.fields:
+            if self.form_excluded_columns and field.name in self.form_excluded_columns:
+                continue
+            field_type = type(field.default_value)
+            FormClass = wtforms_type_map[field_type]
+            form_field = FormClass(field.name, default=field.default_value)
+            setattr(NewForm, field.name, form_field)
+        return NewForm
 
     def scaffold_list_form(self, widget=None, validators=None):
         pass

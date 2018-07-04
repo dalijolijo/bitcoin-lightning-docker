@@ -84,8 +84,8 @@ class LightningClient(object):
     def get_peers(self) -> ln.ListPeersResponse:
         return self.lnd_client.ListPeers(ln.ListPeersRequest()).peers
 
-    def connect(self, pubkey: str, peer_uri: str):
-        address = ln.LightningAddress(pubkey=pubkey, host=peer_uri)
+    def connect(self, pubkey: str, host: str):
+        address = ln.LightningAddress(pubkey=pubkey, host=host)
         request = ln.ConnectPeerRequest(addr=address)
         return self.lnd_client.ConnectPeer(request)
 
