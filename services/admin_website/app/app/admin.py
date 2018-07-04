@@ -1,5 +1,7 @@
 import os
+import string
 from pprint import pformat
+import random
 
 import bitcoin.rpc
 from flask import Flask, redirect
@@ -102,6 +104,12 @@ def create_app():
                   index_view=BlockchainView(name='Bitcoin')
                   )
     app.config['FLASK_ADMIN_FLUID_LAYOUT'] = True
+    secret_key = os.environ.get('FLASK_SECRET_KEY')
+    if secret_key is None:
+        secret_key = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
+        os.environ['FLASK_SECRET_KEY'] = secret_key
+    app.config['SECRET_KEY'] = secret_key
+
 
     @app.route('/')
     def index():

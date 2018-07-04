@@ -76,13 +76,13 @@ class LightningClient(object):
         return self.lnd_client.WalletBalance(ln.WalletBalanceRequest())
 
     def get_channels(self) -> ln.ListChannelsResponse:
-        return self.lnd_client.ListChannels(ln.ListChannelsRequest())
+        return self.lnd_client.ListChannels(ln.ListChannelsRequest()).channels
 
     def get_new_address(self) -> ln.NewAddressResponse:
         return self.lnd_client.NewAddress(ln.NewAddressRequest())
 
     def get_peers(self) -> ln.ListPeersResponse:
-        return self.lnd_client.ListPeers(ln.ListPeersRequest())
+        return self.lnd_client.ListPeers(ln.ListPeersRequest()).peers
 
     def connect(self, pubkey: str, peer_uri: str):
         address = ln.LightningAddress(pubkey=pubkey, host=peer_uri)
