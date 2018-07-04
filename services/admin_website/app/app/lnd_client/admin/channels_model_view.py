@@ -1,3 +1,5 @@
+from flask import flash
+from flask_admin.babel import gettext
 from wtforms import StringField, SelectField
 
 from app.lnd_client.admin.lnd_model_view import LNDModelView
@@ -21,5 +23,8 @@ class ChannelsModelView(LNDModelView):
         return form_class
 
     def create_model(self, form):
-        print(form)
-        pass
+        try:
+            self.ln.open_channel(**form.data)
+        except Exception as exc:
+            flash(gettext(exc._state.details), 'error')
+        return
