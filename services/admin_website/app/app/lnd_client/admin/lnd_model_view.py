@@ -1,3 +1,4 @@
+import json
 from collections import namedtuple
 import os
 
@@ -24,6 +25,9 @@ class LNDModelView(BaseModelView):
         peer_uri = os.environ.get('LND_PEER_URI', '127.0.0.1:9735')
         self.ln = LightningClient(rpc_uri=rpc_uri, peer_uri=peer_uri)
 
+    with open('rpc.swagger.json', 'r') as swagger_file:
+        swagger = json.load(swagger_file)
+
     map = {
         Peer: LND_Model(get_query='get_peers', primary_key='pub_key'),
         Channel: LND_Model(get_query='get_channels', primary_key='chan_id')
@@ -33,6 +37,7 @@ class LNDModelView(BaseModelView):
 
     can_view_details = True
     details_modal = True
+    create_modal = True
     can_delete = False
     can_edit = False
 
@@ -75,7 +80,12 @@ class LNDModelView(BaseModelView):
                 continue
             field_type = type(field.default_value)
             FormClass = wtforms_type_map[field_type]
-            form_field = FormClass(field.name, default=field.default_value)
+            description = self.swagger['definitions']['lnrpc' + self.create_form_class.__name__]['properties'][field.name]
+            description = description.get('title') or description.get('description')
+            if description:
+                description = description.replace('/ ', '')
+            form_field = FormClass(field.name, default=field.default_value,
+                                   description=description)
             setattr(NewForm, field.name, form_field)
         return NewForm
 
