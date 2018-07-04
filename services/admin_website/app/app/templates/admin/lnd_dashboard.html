@@ -1,0 +1,17 @@
+{% extends 'admin/master.html' %}
+
+{% import 'definition_list_macro.html' as dl %}
+{% import 'table_macro.html' as t %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-10">
+            {{ dl.definition_list(title='Info', data_dict=lnd_info) }}
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+
+{% endblock %}
