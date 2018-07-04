@@ -7,6 +7,8 @@ from flask_admin import Admin, AdminIndexView, expose, BaseView
 from google.protobuf.json_format import MessageToDict
 from markupsafe import Markup
 
+from app.lnd_client.admin.channels import ChannelModelView
+from app.lnd_client.grpc_generated.rpc_pb2 import Channel
 from app.lnd_client.lightning_client import LightningClient
 
 if os.environ.get('TESTNET', 1):
@@ -59,7 +61,6 @@ class LightningView(BaseView):
     def index(self):
         rpc_uri = os.environ.get('LND_RPC_URI', '127.0.0.1:10009')
         peer_uri = os.environ.get('LND_PEER_URI', '127.0.0.1:9735')
-        print(rpc_uri, peer_uri)
         ln = LightningClient(rpc_uri=rpc_uri, peer_uri=peer_uri)
 
         try:
@@ -104,6 +105,8 @@ def create_app():
         return redirect('/admin')
 
     admin.add_view(LightningView(name='Lightning', endpoint='lightning'))
+
+    admin.add_view(ChannelModelView(Channel))
 
     with open('bitcoin.conf', 'w') as conf_file:
         lines = [
