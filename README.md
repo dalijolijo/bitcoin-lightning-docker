@@ -1,4 +1,10 @@
-Quick Start Guide
+# Similar projects
+ 
+* ![Satoshi Portal Dockerfiles](https://github.com/SatoshiPortal/dockers)
+ 
+*  ![How to dockerise a lightning app](https://github.com/schulterklopfer/howto_dockerise_a_lapp)
+
+# Quick Start Guide
 
 1. `cp docker/sample_dot_env docker/.env` 
 
@@ -15,5 +21,4 @@ Quick Start Guide
 
 
 ![Lightning Admin](https://raw.githubusercontent.com/PierreRochard/bitcoin-lightning-docker/master/readme_images/lightning_admin.png)
-
 
