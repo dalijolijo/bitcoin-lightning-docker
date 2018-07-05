@@ -1,8 +1,8 @@
 # Similar projects
  
-* ![Satoshi Portal Dockerfiles](https://github.com/SatoshiPortal/dockers)
+* [Satoshi Portal Dockerfiles](https://github.com/SatoshiPortal/dockers)
  
-*  ![How to dockerise a lightning app](https://github.com/schulterklopfer/howto_dockerise_a_lapp)
+* [How to dockerise a lightning app](https://github.com/schulterklopfer/howto_dockerise_a_lapp)
 
 # Quick Start Guide
 
