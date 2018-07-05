@@ -101,7 +101,8 @@ class LightningClient(object):
                                         private=private,
                                         min_htlc_msat=min_htlc_msat,
                                         remote_csv_delay=remote_csv_delay)
-        self.lnd_client.OpenChannel(request)
+        response = self.lnd_client.OpenChannel(request)
+        return response
 
     def create_invoice(self, amount: int) -> ln.AddInvoiceResponse:
         request = ln.Invoice(value=amount)

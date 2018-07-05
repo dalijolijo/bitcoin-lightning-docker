@@ -2,7 +2,6 @@ from flask import flash
 from flask_admin.babel import gettext
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
 from flask_admin.model.fields import AjaxSelectField
-from wtforms import SelectField
 
 from app.lnd_client.admin.lnd_model_view import LNDModelView
 from app.lnd_client.grpc_generated.rpc_pb2 import OpenChannelRequest, Channel, \
@@ -18,7 +17,7 @@ class PeersAjaxModelLoader(AjaxModelLoader):
     def format(self, model):
         if model is None:
             return '', ''
-        return model.pub_key, model.pub_key
+        return model.pub_key, model.pub_key + '@' + model.address
 
     def get_one(self, pk):
         pass
@@ -50,7 +49,16 @@ class ChannelsModelView(LNDModelView):
 
     def create_model(self, form):
         try:
-            self.ln.open_channel(**form.data)
+            data = form.data
+            data['node_pubkey_string'] = form.node_pubkey_string.raw_data[0]
+            response = self.ln.open_channel(**data)
+            if hasattr(response, '_state') and response._state.details:
+                flash(gettext(response._state.details), 'error')
+
         except Exception as exc:
-            flash(gettext(exc._state.details), 'error')
-        return
+            if hasattr(exc, '_state'):
+                flash(gettext(exc._state.details), 'error')
+            else:
+                flash(gettext(str(exc)))
+                raise
+        return Channel()
