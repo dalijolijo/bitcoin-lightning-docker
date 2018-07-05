@@ -1,10 +1,11 @@
 FROM tiangolo/uwsgi-nginx-flask:python3.6-alpine3.7
 
-RUN apk add --update \
+RUN apk add --update --no-cache \
     python \
     python-dev \
     py-pip \
     build-base \
+    bash \
   && pip install virtualenv \
   && rm -rf /var/cache/apk/*
 
