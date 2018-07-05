@@ -12,4 +12,6 @@ RUN apk add --update --no-cache \
 COPY requirements.txt /
 RUN pip install -r /requirements.txt
 
+RUN ln -sf /app/app/rpc.swagger.json /app/rpc.swagger.json
+
 COPY ./app /app
