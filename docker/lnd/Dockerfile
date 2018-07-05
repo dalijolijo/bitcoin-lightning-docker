@@ -5,7 +5,7 @@ FROM golang:1.10-alpine as builder
 ENV GODEBUG netdns=cgo
 
 # Install dependencies and install/build lnd.
-RUN apk add --no-cache git make
+RUN apk add --no-cache git make bash
 RUN go get -u github.com/golang/dep/cmd/dep
 RUN go get -d github.com/lightningnetwork/lnd
 RUN  cd /go/src/github.com/lightningnetwork/lnd &&  make &&  make install
