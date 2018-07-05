@@ -3,7 +3,7 @@ from collections import namedtuple
 import os
 
 from flask_admin.model import BaseModelView
-from wtforms import Form, StringField, IntegerField, BooleanField
+from wtforms import Form, StringField, IntegerField, BooleanField, validators
 
 from app.lnd_client.grpc_generated.rpc_pb2 import Peer, Channel
 from app.lnd_client.lightning_client import LightningClient
@@ -86,8 +86,10 @@ class LNDModelView(BaseModelView):
             description = description.get('title') or description.get('description')
             if description:
                 description = description.replace('/ ', '')
-            form_field = FormClass(field.name, default=field.default_value or None,
+            form_field = FormClass(field.name,
+                                   default=field.default_value or None,
                                    description=description,
+                                   validators=[validators.optional()]
                                    )
             setattr(NewForm, field.name, form_field)
         return NewForm
