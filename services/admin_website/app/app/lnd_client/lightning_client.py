@@ -128,6 +128,11 @@ class LightningClient(object):
         response = self.lnd_client.SendPayment(request_iterable)
         return response
 
+    def send_payment_sync(self, **kwargs) -> ln.SendResponse:
+        request = ln.SendRequest(**kwargs)
+        response = self.lnd_client.SendPaymentSync(request)
+        return response
+
     def close_channel(self, channel_point: str):
         request = ln.CloseChannelRequest(channel_point=channel_point)
         response = self.lnd_client.CloseChannel(request)
