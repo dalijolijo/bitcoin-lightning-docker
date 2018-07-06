@@ -5,7 +5,8 @@ import os
 from flask_admin.model import BaseModelView
 from wtforms import Form, StringField, IntegerField, BooleanField, validators
 
-from app.lnd_client.grpc_generated.rpc_pb2 import Peer, Channel
+from app.lnd_client.grpc_generated.rpc_pb2 import Peer, Channel, Invoice, \
+    Payment
 from app.lnd_client.lightning_client import LightningClient
 
 LND_Model = namedtuple('LND_Model', ['get_query', 'primary_key'])
@@ -30,7 +31,9 @@ class LNDModelView(BaseModelView):
 
     map = {
         Peer: LND_Model(get_query='get_peers', primary_key='pub_key'),
-        Channel: LND_Model(get_query='get_channels', primary_key='chan_id')
+        Channel: LND_Model(get_query='get_channels', primary_key='chan_id'),
+        Invoice: LND_Model(get_query='get_invoices', primary_key='payment_request'),
+        Payment: LND_Model(get_query='get_payments', primary_key='payment_hash')
     }
 
     create_form_class = None
@@ -81,6 +84,8 @@ class LNDModelView(BaseModelView):
             if self.form_excluded_columns and field.name in self.form_excluded_columns:
                 continue
             field_type = type(field.default_value)
+            if field_type == list:
+                continue
             FormClass = wtforms_type_map[field_type]
             description = self.swagger['definitions']['lnrpc' + self.create_form_class.__name__]['properties'][field.name]
             description = description.get('title') or description.get('description')
