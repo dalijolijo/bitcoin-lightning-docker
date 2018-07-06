@@ -81,6 +81,11 @@ class LightningClient(object):
         response = self.lnd_client.GetTransactions(request)
         return response.transactions
 
+    def get_channel_balance(self) -> ln.ChannelBalanceResponse:
+        request = ln.ChannelBalanceRequest()
+        response = self.lnd_client.ChannelBalance(request)
+        return response
+
     def get_channels(self) -> List[ln.Channel]:
         return self.lnd_client.ListChannels(ln.ListChannelsRequest()).channels
 

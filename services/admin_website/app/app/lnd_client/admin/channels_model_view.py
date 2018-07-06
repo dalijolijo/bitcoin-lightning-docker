@@ -1,7 +1,9 @@
 from flask import flash
+from flask_admin import expose
 from flask_admin.babel import gettext
 from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
 from flask_admin.model.fields import AjaxSelectField
+from google.protobuf.json_format import MessageToDict
 from grpc import StatusCode
 
 from app.lnd_client.admin.lnd_model_view import LNDModelView
@@ -47,7 +49,7 @@ class ChannelsModelView(LNDModelView):
     form_ajax_refs = {
         'node_pubkey_string': peer_ajax_loader
     }
-
+    list_template = 'admin/channels_list.html'
 
 
     def scaffold_form(self):
@@ -84,3 +86,9 @@ class ChannelsModelView(LNDModelView):
             new_channel = [c for c in self.ln.get_channels()
                            if c.remote_pubkey == data['node_pubkey_string']][0]
             return new_channel
+
+    @expose('/')
+    def index_view(self):
+        balance = self.ln.get_channel_balance()
+        self._template_args['balance'] = MessageToDict(balance)
+        return super(ChannelsModelView, self).index_view()
