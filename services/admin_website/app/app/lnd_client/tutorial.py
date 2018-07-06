@@ -29,8 +29,8 @@ class LightningNetwork(object):
     def setup_p2p_connection(source_node: LightningClient,
                              destination_node: LightningClient):
         try:
-            source_node.connect(destination_node.pubkey,
-                                destination_node.listening_uri)
+            source_node.connect_peer(destination_node.pubkey,
+                                     destination_node.listening_uri)
         except Exception as exc:
             if 'already connected to peer' in exc._state.details:
                 pass
