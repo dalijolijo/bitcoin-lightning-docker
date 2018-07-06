@@ -76,7 +76,12 @@ class LightningClient(object):
     def get_balance(self) -> ln.WalletBalanceResponse:
         return self.lnd_client.WalletBalance(ln.WalletBalanceRequest())
 
-    def get_channels(self) -> ln.ListChannelsResponse:
+    def get_transactions(self) -> List[ln.Transaction]:
+        request = ln.GetTransactionsRequest()
+        response = self.lnd_client.GetTransactions(request)
+        return response.transactions
+
+    def get_channels(self) -> List[ln.Channel]:
         return self.lnd_client.ListChannels(ln.ListChannelsRequest()).channels
 
     def get_invoices(self, pending_only: bool = False) -> List[ln.Invoice]:
