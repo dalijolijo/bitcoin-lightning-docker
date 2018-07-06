@@ -95,10 +95,16 @@ class LightningClient(object):
     def get_peers(self) -> ln.ListPeersResponse:
         return self.lnd_client.ListPeers(ln.ListPeersRequest()).peers
 
-    def connect(self, pubkey: str, host: str):
+    def connect_peer(self, pubkey: str, host: str) -> ln.ConnectPeerResponse:
         address = ln.LightningAddress(pubkey=pubkey, host=host)
         request = ln.ConnectPeerRequest(addr=address)
-        return self.lnd_client.ConnectPeer(request)
+        response = self.lnd_client.ConnectPeer(request)
+        return response
+
+    def disconnect_peer(self, pub_key: str) -> ln.DisconnectPeerResponse:
+        request = ln.DisconnectPeerRequest(pub_key=pub_key)
+        response = self.lnd_client.DisconnectPeer(request)
+        return response
 
     def open_channel(self, node_pubkey_string: str, local_funding_amount: int,
                      push_sat: int, target_conf: int, sat_per_byte: int,
