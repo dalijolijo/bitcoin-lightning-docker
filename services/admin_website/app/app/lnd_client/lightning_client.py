@@ -73,10 +73,15 @@ class LightningClient(object):
     def pubkey(self):
         return self.get_info().identity_pubkey
 
-    def get_balance(self) -> ln.WalletBalanceResponse:
+    def get_wallet_balance(self) -> ln.WalletBalanceResponse:
         return self.lnd_client.WalletBalance(ln.WalletBalanceRequest())
 
-    def get_channels(self) -> ln.ListChannelsResponse:
+    def get_transactions(self) -> List[ln.Transaction]:
+        request = ln.GetTransactionsRequest()
+        response = self.lnd_client.GetTransactions(request)
+        return response.transactions
+
+    def get_channels(self) -> List[ln.Channel]:
         return self.lnd_client.ListChannels(ln.ListChannelsRequest()).channels
 
     def get_invoices(self, pending_only: bool = False) -> List[ln.Invoice]:
@@ -89,8 +94,10 @@ class LightningClient(object):
         response = self.lnd_client.ListPayments(request)
         return response.payments
 
-    def get_new_address(self) -> ln.NewAddressResponse:
-        return self.lnd_client.NewAddress(ln.NewAddressRequest())
+    def get_new_address(self, address_type: str = 'p2wkh') -> str:
+        request = ln.NewAddressRequest(type=address_type)
+        response = self.lnd_client.NewAddress(request)
+        return response.address
 
     def get_peers(self) -> ln.ListPeersResponse:
         return self.lnd_client.ListPeers(ln.ListPeersRequest()).peers
@@ -143,3 +150,4 @@ class LightningClient(object):
         request = ln.CloseChannelRequest(channel_point=channel_point)
         response = self.lnd_client.CloseChannel(request)
         return response
+        ln.NewAddressRequest
