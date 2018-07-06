@@ -19,6 +19,13 @@ class TransactionsModelView(LNDModelView):
 
     @expose('/')
     def index_view(self):
+        addresses = {
+            'p2wkh': self.ln.get_new_address(address_type='WITNESS_PUBKEY_HASH'),
+            'np2wkh': self.ln.get_new_address(address_type='NESTED_PUBKEY_HASH')
+        }
+        self._template_args['addresses'] = addresses
+
         balance = self.ln.get_wallet_balance()
         self._template_args['balance'] = MessageToDict(balance)
+
         return super(TransactionsModelView, self).index_view()

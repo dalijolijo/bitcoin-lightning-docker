@@ -94,8 +94,10 @@ class LightningClient(object):
         response = self.lnd_client.ListPayments(request)
         return response.payments
 
-    def get_new_address(self) -> ln.NewAddressResponse:
-        return self.lnd_client.NewAddress(ln.NewAddressRequest())
+    def get_new_address(self, address_type: str = 'p2wkh') -> str:
+        request = ln.NewAddressRequest(type=address_type)
+        response = self.lnd_client.NewAddress(request)
+        return response.address
 
     def get_peers(self) -> ln.ListPeersResponse:
         return self.lnd_client.ListPeers(ln.ListPeersRequest()).peers
