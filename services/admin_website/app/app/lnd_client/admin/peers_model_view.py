@@ -33,7 +33,7 @@ class PeersModelView(LNDModelView):
         except Exception as exc:
             flash(gettext(exc._state.details), 'error')
             return
-        new_peer = [p for p in self.ln.get_peers() if p.pub_key == pubkey]
+        new_peer = [p for p in self.ln.get_peers() if p.pub_key == pubkey][0]
         return new_peer
 
     def delete_model(self, model: Peer):

@@ -36,6 +36,7 @@ class ChannelsModelView(LNDModelView):
     get_query = 'get_channels'
     primary_key = 'chan_id'
 
+    column_default_sort = 'chan_id'
     form_excluded_columns = ['node_pubkey']
     form_ajax_refs = {
         'node_pubkey_string': peer_ajax_loader
@@ -44,24 +45,29 @@ class ChannelsModelView(LNDModelView):
     def scaffold_form(self):
         form_class = super(ChannelsModelView, self).scaffold_form()
         old = form_class.node_pubkey_string
-        form_class.node_pubkey_string = AjaxSelectField(loader=self.peer_ajax_loader,
-                                                        label='node_pubkey_string',
-                                                        allow_blank=True,
-                                                        description=old.kwargs['description'])
+        ajax_field = AjaxSelectField(loader=self.peer_ajax_loader,
+                                     label='node_pubkey_string',
+                                     allow_blank=True,
+                                     description=old.kwargs['description'])
+        form_class.node_pubkey_string = ajax_field
         return form_class
 
     def create_model(self, form):
+        data = form.data
+        data['node_pubkey_string'] = form.node_pubkey_string.raw_data[0]
         try:
-            data = form.data
-            data['node_pubkey_string'] = form.node_pubkey_string.raw_data[0]
             response = self.ln.open_channel(**data)
             if hasattr(response, '_state') and response._state.details:
                 flash(gettext(response._state.details), 'error')
+                return False
 
         except Exception as exc:
             if hasattr(exc, '_state'):
                 flash(gettext(exc._state.details), 'error')
             else:
                 flash(gettext(str(exc)))
-                raise
-        return Channel()
+            return False
+
+        new_channel = [c for c in self.ln.get_channels()
+                       if c.node_pubkey_string == data['node_pubkey_string']][0]
+        return new_channel
