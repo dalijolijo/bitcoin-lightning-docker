@@ -115,14 +115,16 @@ class LightningClient(object):
         response = self.lnd_client.OpenChannel(request)
         return response
 
-    def create_invoice(self, amount: int) -> ln.AddInvoiceResponse:
-        request = ln.Invoice(value=amount)
+    def create_invoice(self, **kwargs) -> ln.AddInvoiceResponse:
+        request = ln.Invoice(**kwargs)
         return self.lnd_client.AddInvoice(request)
 
-    def send_payment(self, encoded_invoice: str):
-        def request_generator(ei: str):
-            yield ln.SendRequest(payment_request=ei)
-        request_iterable = request_generator(encoded_invoice)
+    @staticmethod
+    def request_generator(**kwargs):
+        yield ln.SendRequest(**kwargs)
+
+    def send_payment(self, **kwargs) -> ln.SendResponse:
+        request_iterable = self.request_generator(**kwargs)
         response = self.lnd_client.SendPayment(request_iterable)
         return response
 
