@@ -11,11 +11,15 @@ from markupsafe import Markup
 
 from app.lnd_client.admin.channels_model_view import ChannelsModelView
 from app.lnd_client.admin.invoices_model_view import InvoicesModelView
-from app.lnd_client.admin.lnd_model_view import LNDModelView
 from app.lnd_client.admin.payments_model_view import PaymentsModelView
 from app.lnd_client.admin.peers_model_view import PeersModelView
-from app.lnd_client.grpc_generated.rpc_pb2 import Channel, Peer, Invoice, \
-    Payment
+from app.lnd_client.admin.transactions_model_view import TransactionsModelView
+from app.lnd_client.grpc_generated.rpc_pb2 import (
+    Channel,
+    Invoice,
+    Payment,
+    Peer,
+    Transaction)
 from app.lnd_client.lightning_client import LightningClient
 
 if os.environ.get('TESTNET', 1):
@@ -123,6 +127,10 @@ def create_app():
     admin.add_view(LightningDashboardView(name='Dashboard',
                                           endpoint='lightning',
                                           category='LND'))
+
+    admin.add_view(TransactionsModelView(Transaction,
+                                         name='Transactions',
+                                         category='LND'))
 
     admin.add_view(PeersModelView(Peer,
                                   name='Peers',
