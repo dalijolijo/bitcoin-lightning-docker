@@ -1,6 +1,7 @@
 import codecs
 import os
 from sys import platform
+from typing import List
 
 import grpc
 from grpc._plugin_wrapping import (
@@ -77,6 +78,16 @@ class LightningClient(object):
 
     def get_channels(self) -> ln.ListChannelsResponse:
         return self.lnd_client.ListChannels(ln.ListChannelsRequest()).channels
+
+    def get_invoices(self, pending_only: bool = False) -> List[ln.Invoice]:
+        request = ln.ListInvoiceRequest(pending_only=pending_only)
+        response = self.lnd_client.ListInvoices(request)
+        return response.invoices
+
+    def get_payments(self) -> List[ln.Payment]:
+        request = ln.ListPaymentsRequest()
+        response = self.lnd_client.ListPayments(request)
+        return response.payments
 
     def get_new_address(self) -> ln.NewAddressResponse:
         return self.lnd_client.NewAddress(ln.NewAddressRequest())
