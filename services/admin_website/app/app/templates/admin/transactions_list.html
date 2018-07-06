@@ -1,0 +1,18 @@
+{% extends 'admin/lnd_list.html' %}
+
+{% import 'definition_list_macro.html' as dl %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+                {{ dl.definition_list(title='Wallet Balance', data_dict=balance) }}
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+
+    {{ super() }}
+{% endblock %}

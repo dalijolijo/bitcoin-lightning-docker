@@ -73,7 +73,7 @@ class LightningClient(object):
     def pubkey(self):
         return self.get_info().identity_pubkey
 
-    def get_balance(self) -> ln.WalletBalanceResponse:
+    def get_wallet_balance(self) -> ln.WalletBalanceResponse:
         return self.lnd_client.WalletBalance(ln.WalletBalanceRequest())
 
     def get_transactions(self) -> List[ln.Transaction]:
@@ -148,3 +148,4 @@ class LightningClient(object):
         request = ln.CloseChannelRequest(channel_point=channel_point)
         response = self.lnd_client.CloseChannel(request)
         return response
+        ln.NewAddressRequest
