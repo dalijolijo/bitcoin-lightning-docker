@@ -8,6 +8,7 @@ from app.lnd_client.grpc_generated.rpc_pb2 import LightningAddress
 
 class PeersModelView(LNDModelView):
     can_create = True
+    can_delete = True
     create_form_class = LightningAddress
     get_query = 'get_peers'
     primary_key = 'pub_key'
@@ -29,4 +30,9 @@ class PeersModelView(LNDModelView):
             self.ln.connect(pubkey=pubkey, host=host)
         except Exception as exc:
             flash(gettext(exc._state.details), 'error')
-        return
+            return
+        new_peer = [p for p in self.ln.get_peers() if p.pub_key == pubkey]
+        return new_peer
+
+    def delete_model(self, model):
+        return NotImplementedError()

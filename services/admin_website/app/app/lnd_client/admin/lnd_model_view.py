@@ -59,10 +59,10 @@ class LNDModelView(BaseModelView):
         return len(results), results
 
     def create_model(self, form):
-        pass
+        return NotImplementedError()
 
     def update_model(self, form, model):
-        pass
+        return NotImplementedError()
 
     def delete_model(self, model):
         return NotImplementedError()
