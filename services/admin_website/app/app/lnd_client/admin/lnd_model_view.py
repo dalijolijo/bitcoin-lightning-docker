@@ -7,10 +7,13 @@ from wtforms import Form, StringField, IntegerField, BooleanField, validators
 from app.lnd_client.lightning_client import LightningClient
 
 wtforms_type_map = {
-    bytes: StringField,
-    str: StringField,
-    int: IntegerField,
-    bool: BooleanField
+    3: IntegerField,  # int64
+    4: IntegerField,  # uint64
+    5: IntegerField,  # int32
+    8: BooleanField,  # bool
+    9: StringField,   # string
+    12: StringField,  # bytes
+    13: IntegerField, # uint32
 }
 
 class LNDModelView(BaseModelView):
@@ -71,11 +74,15 @@ class LNDModelView(BaseModelView):
             return NewForm
 
         for field in self.create_form_class.DESCRIPTOR.fields:
+
             if self.form_excluded_columns and field.name in self.form_excluded_columns:
                 continue
-            field_type = type(field.default_value)
-            if field_type == list:
+
+            field_type = field.type
+
+            if field_type == 11: # Todo: handle "message" type, which is a nested object
                 continue
+
             FormClass = wtforms_type_map[field_type]
             description = self.swagger['definitions']['lnrpc' + self.create_form_class.__name__]['properties'][field.name]
             description = description.get('title') or description.get('description')
