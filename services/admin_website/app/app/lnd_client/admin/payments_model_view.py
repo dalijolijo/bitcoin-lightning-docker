@@ -8,6 +8,8 @@ from app.lnd_client.grpc_generated.rpc_pb2 import Payment
 class PaymentsModelView(LNDModelView):
     can_create = True
     create_form_class = Payment
+    get_query = 'get_payments'
+    primary_key = 'payment_hash'
 
     def scaffold_form(self):
         form_class = super(PaymentsModelView, self).scaffold_form()

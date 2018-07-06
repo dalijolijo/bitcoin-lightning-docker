@@ -8,6 +8,8 @@ from app.lnd_client.grpc_generated.rpc_pb2 import Invoice
 class InvoicesModelView(LNDModelView):
     can_create = True
     create_form_class = Invoice
+    get_query = 'get_invoices'
+    primary_key = 'payment_request'
 
     def scaffold_form(self):
         form_class = super(InvoicesModelView, self).scaffold_form()

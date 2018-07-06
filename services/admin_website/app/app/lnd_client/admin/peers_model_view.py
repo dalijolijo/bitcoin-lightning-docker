@@ -9,7 +9,8 @@ from app.lnd_client.grpc_generated.rpc_pb2 import LightningAddress
 class PeersModelView(LNDModelView):
     can_create = True
     create_form_class = LightningAddress
-
+    get_query = 'get_peers'
+    primary_key = 'pub_key'
 
     def scaffold_form(self):
         form_class = super(PeersModelView, self).scaffold_form()

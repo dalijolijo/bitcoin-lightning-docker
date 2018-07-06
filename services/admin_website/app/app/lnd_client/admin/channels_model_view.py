@@ -33,6 +33,9 @@ class ChannelsModelView(LNDModelView):
 
     can_create = True
     create_form_class = OpenChannelRequest
+    get_query = 'get_channels'
+    primary_key = 'chan_id'
+
     form_excluded_columns = ['node_pubkey']
     form_ajax_refs = {
         'node_pubkey_string': peer_ajax_loader
