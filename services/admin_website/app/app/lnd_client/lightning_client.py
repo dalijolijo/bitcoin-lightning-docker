@@ -141,6 +141,11 @@ class LightningClient(object):
         response = self.lnd_client.SendPayment(request_iterable)
         return response
 
+    def decode_payment_request(self, pay_req: str) -> ln.PayReq:
+        request = ln.PayReqString(pay_req=pay_req)
+        response = self.lnd_client.DecodePayReq(request)
+        return response
+
     def send_payment_sync(self, **kwargs) -> ln.SendResponse:
         request = ln.SendRequest(**kwargs)
         response = self.lnd_client.SendPaymentSync(request)
@@ -150,4 +155,3 @@ class LightningClient(object):
         request = ln.CloseChannelRequest(channel_point=channel_point)
         response = self.lnd_client.CloseChannel(request)
         return response
-        ln.NewAddressRequest
