@@ -8,6 +8,7 @@ services:
       - ${PWD}/data:/root/.bitcoin:ro
       - ${PWD}/data:/home/bitcoin/.bitcoin
     command:
+      bitcoind
       -server
       -testnet=${TESTNET}
       -rpcuser=${RPCUSER}
