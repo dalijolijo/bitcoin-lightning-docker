@@ -9,7 +9,7 @@ services:
       - ${PWD}/data:/home/bitcoin/.bitcoin
     command:
       -server
-      -testnet=${TESTNET}
+      -${NETWORK}
       -rpcuser=${RPCUSER}
       -rpcauth=${RPCAUTH}
       -rpcallowip=0.0.0.0/0
@@ -62,7 +62,7 @@ services:
       - BITCOIND_RPC_HOST=bitcoind
       - BITCOIND_RPC_USER=${RPCUSER}
       - BITCOIND_RPC_PASSWORD=${RPCPASSWORD}
-      - TESTNET=${TESTNET}
+      - NETWORK=${NETWORK}
       - LND_RPC_URI=lnd:10009
       - LND_PEER_URI=lnd:9735
     volumes:

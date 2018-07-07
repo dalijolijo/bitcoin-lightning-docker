@@ -5,7 +5,6 @@ RPCPASSWORD=YOUR_PASSWORD
 # see https://github.com/ruimarinho/docker-bitcoin-core#using-rpcauth-for-remote-authentication
 RPCAUTH=YOUR_AUTH
 
-TESTNET=1
 DEBUG=0
 TXINDEX=1
 
