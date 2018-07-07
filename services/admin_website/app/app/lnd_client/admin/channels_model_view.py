@@ -12,6 +12,7 @@ from app.lnd_client.grpc_generated.rpc_pb2 import (
     OpenChannelRequest,
     Peer
 )
+from app.lnd_client.peer_directory import peer_directory
 
 
 class PeersAjaxModelLoader(AjaxModelLoader):
@@ -23,7 +24,7 @@ class PeersAjaxModelLoader(AjaxModelLoader):
     def format(self, model):
         if model is None:
             return '', ''
-        return model.pub_key, model.pub_key + '@' + model.address
+        return model.pub_key, f'{peer_directory[model.pub_key].name} ' + model.pub_key[0:20] + '@' + model.address
 
     def get_one(self, pk):
         return [r for r in LNDModelView(Channel).ln.get_peers()
