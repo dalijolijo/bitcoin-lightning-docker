@@ -1,3 +1,5 @@
+import codecs
+
 from flask import flash
 from flask_admin import expose
 from flask_admin.babel import gettext
@@ -65,7 +67,7 @@ class ChannelsModelView(LNDModelView):
                                      label='node_pubkey_string',
                                      allow_blank=True,
                                      description=old.kwargs['description'])
-        form_class.local_funding_amount.kwargs['default'] = 60000
+        form_class.local_funding_amount.kwargs['default'] = 500000
         form_class.push_sat.kwargs['default'] = 0
         form_class.target_conf.kwargs['default'] = 3
         form_class.sat_per_byte.kwargs['default'] = 250
@@ -77,7 +79,7 @@ class ChannelsModelView(LNDModelView):
         data = form.data
         data['node_pubkey_string'] = data['node_pubkey_string'].pub_key
         try:
-            response = self.ln.open_channel(**data)
+            response = self.ln.open_channel_sync(**data)
         except Exception as exc:
             if hasattr(exc, '_state'):
                 flash(gettext(exc._state.details), 'error')
@@ -85,12 +87,14 @@ class ChannelsModelView(LNDModelView):
                 flash(gettext(str(exc)))
             return False
 
-        if response.code() == StatusCode.UNKNOWN:
+        if hasattr(response, 'code') and response.code() == StatusCode.UNKNOWN:
             flash(gettext(response._state.details), 'error')
             return False
         else:
+            txid = codecs.decode(response.funding_txid_bytes , 'hex')
+            outpoint = ':'.join([txid, str(response.output_index)])
             new_channel = [c for c in self.ln.get_channels()
-                           if c.remote_pubkey == data['node_pubkey_string']][0]
+                           if c.channel_point == outpoint][0]
             return new_channel
 
     @expose('/')
