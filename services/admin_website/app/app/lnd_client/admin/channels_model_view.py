@@ -5,14 +5,15 @@ from flask_admin.model.ajax import AjaxModelLoader, DEFAULT_PAGE_SIZE
 from flask_admin.model.fields import AjaxSelectField
 from google.protobuf.json_format import MessageToDict
 from grpc import StatusCode
+from markupsafe import Markup
 
+from app.formatters.lnd import pub_key_formatter
 from app.lnd_client.admin.lnd_model_view import LNDModelView
 from app.lnd_client.grpc_generated.rpc_pb2 import (
     Channel,
     OpenChannelRequest,
     Peer
 )
-from app.lnd_client.peer_directory import peer_directory
 
 
 class PeersAjaxModelLoader(AjaxModelLoader):
@@ -24,7 +25,8 @@ class PeersAjaxModelLoader(AjaxModelLoader):
     def format(self, model):
         if model is None:
             return '', ''
-        return model.pub_key, f'{peer_directory[model.pub_key].name} ' + model.pub_key[0:20] + '@' + model.address
+        formatted = pub_key_formatter(view=None, context=None, model=model, name='pub_key')
+        return model.pub_key, Markup(formatted).striptags()
 
     def get_one(self, pk):
         return [r for r in LNDModelView(Channel).ln.get_peers()
@@ -52,6 +54,9 @@ class ChannelsModelView(LNDModelView):
     }
     list_template = 'admin/channels_list.html'
 
+    column_formatters = {
+        'remote_pubkey': pub_key_formatter
+    }
 
     def scaffold_form(self):
         form_class = super(ChannelsModelView, self).scaffold_form()

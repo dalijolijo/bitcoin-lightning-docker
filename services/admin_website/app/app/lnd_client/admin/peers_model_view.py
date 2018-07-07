@@ -2,6 +2,7 @@ from flask import flash
 from flask_admin.babel import gettext
 from wtforms import StringField
 
+from app.formatters.lnd import pub_key_formatter
 from app.lnd_client.admin.lnd_model_view import LNDModelView
 from app.lnd_client.grpc_generated.rpc_pb2 import LightningAddress, Peer
 
@@ -14,6 +15,10 @@ class PeersModelView(LNDModelView):
     primary_key = 'pub_key'
 
     column_default_sort = 'pub_key'
+
+    column_formatters = {
+        'pub_key': pub_key_formatter
+    }
 
     def scaffold_form(self):
         form_class = super(PeersModelView, self).scaffold_form()
