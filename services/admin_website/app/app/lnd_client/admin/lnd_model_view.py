@@ -53,6 +53,7 @@ class LNDModelView(BaseModelView):
 
         results = getattr(self.ln, self.get_query)()
 
+        sort_field = sort_field or self.column_default_sort
         if sort_field is not None:
             results.sort(key=lambda x: getattr(x, sort_field),
                          reverse=sort_desc)
