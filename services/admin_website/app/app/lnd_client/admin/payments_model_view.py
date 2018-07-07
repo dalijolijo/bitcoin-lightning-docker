@@ -4,6 +4,7 @@ from flask import flash
 from flask_admin.babel import gettext
 from google.protobuf.json_format import MessageToDict
 
+from app.formatters.lnd import path_formatter
 from app.lnd_client.admin.lnd_model_view import LNDModelView
 from app.lnd_client.grpc_generated.rpc_pb2 import SendRequest
 
@@ -13,6 +14,10 @@ class PaymentsModelView(LNDModelView):
     create_form_class = SendRequest
     get_query = 'get_payments'
     primary_key = 'payment_hash'
+
+    column_formatters = {
+        'path': path_formatter
+    }
 
     def scaffold_form(self):
         form_class = super(PaymentsModelView, self).scaffold_form()
