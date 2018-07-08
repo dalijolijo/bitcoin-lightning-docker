@@ -12,7 +12,7 @@
 
 1. `cp docker/sample_dot_env docker/.env` 
 
-2. update `docker/.env` with you bitcoind rpc auth
+2. update `docker/.env` with your bitcoind rpc credentials
 
 2. `cd docker && docker-compose up`
 
