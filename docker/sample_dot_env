@@ -2,7 +2,6 @@ COMPOSE_PROJECT_NAME=bitcoin_lightning_docker
 
 RPCUSER=YOUR_USER
 RPCPASSWORD=YOUR_PASSWORD
-# see https://github.com/ruimarinho/docker-bitcoin-core#using-rpcauth-for-remote-authentication
 RPCAUTH=YOUR_AUTH
 
 DEBUG=0
