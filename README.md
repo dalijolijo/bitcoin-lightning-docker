@@ -12,11 +12,11 @@
 
 1. `cp docker/sample_dot_env docker/.env` 
 
-2. update `docker/.env` with your bitcoind rpc credentials
+2. Update `RPCUSER`, `RPCPASSWORD`, & `RPCAUTH` entries in `docker/.env` with credentials obtained by following [these instructions](https://github.com/ruimarinho/docker-bitcoin-core#using-rpcauth-for-remote-authentication).
 
 2. `cd docker && docker-compose up`
 
-3. [http://127.0.0.1:5000/admin/](http://127.0.0.1:5000/admin/)
+3. Open [http://127.0.0.1:5000/admin/](http://127.0.0.1:5000/admin/).
 
 
 
