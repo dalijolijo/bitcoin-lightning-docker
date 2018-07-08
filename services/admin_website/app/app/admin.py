@@ -22,8 +22,9 @@ from app.lnd_client.grpc_generated.rpc_pb2 import (
     Transaction)
 from app.lnd_client.lightning_client import LightningClient
 
-if os.environ.get('TESTNET', 1):
-    bitcoin.SelectParams('testnet')
+default_network = 'testnet'
+network = os.environ.get('NETWORK', default_network)
+bitcoin.SelectParams(network)
 
 
 class BlockchainView(AdminIndexView):
