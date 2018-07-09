@@ -1,11 +1,11 @@
 import os
 import string
-from pprint import pformat
 import random
 
 import bitcoin.rpc
-from flask import Flask, redirect
+from flask import Flask, redirect, flash, request
 from flask_admin import Admin, AdminIndexView, expose, BaseView
+from wtforms import Form, IntegerField, validators
 from google.protobuf.json_format import MessageToDict
 from markupsafe import Markup
 
@@ -27,10 +27,32 @@ network = os.environ.get('NETWORK', default_network)
 bitcoin.SelectParams(network)
 
 
+class MineBlocksForm(Form):
+    num_blocks = IntegerField(
+            'How many blocks',
+            [validators.NumberRange(min=1)],
+            default=101,
+            )
+
+
 class BlockchainView(AdminIndexView):
-    @expose('/')
+
+    @expose('/', methods=['GET', 'POST'])
     def index(self):
+
         proxy = bitcoin.rpc.Proxy(btc_conf_file='bitcoin.conf')
+
+        mine_blocks_form = MineBlocksForm(request.form)
+        if request.method == 'POST' and mine_blocks_form.validate():
+            try:
+                num_blocks_to_mine = mine_blocks_form.num_blocks.data
+                block_hashes = proxy.call('generate', num_blocks_to_mine)
+
+                num_blocks_mined = len(block_hashes)
+                flash(f'{num_blocks_mined} blocks mined')
+            except Exception as exc:
+                err = {'Error': str(exc)}
+                flash(err)
 
         try:
             blockchain_info = proxy.call('getblockchaininfo')
@@ -66,7 +88,9 @@ class BlockchainView(AdminIndexView):
                            blockchain_info=blockchain_info,
                            mempool_info=mempool_info,
                            wallet_info=wallet_info,
-                           new_address=new_address
+                           new_address=new_address,
+                           network=network,
+                           mine_blocks_form=mine_blocks_form,
                            )
 
 
@@ -159,7 +183,6 @@ def create_app():
             conf_file.write('='.join(line) + '\n')
 
     return app
-
 
 if __name__ == '__main__':
     app = create_app()
