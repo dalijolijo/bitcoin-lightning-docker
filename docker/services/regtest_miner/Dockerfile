@@ -8,8 +8,6 @@ RUN pip install -r /requirements.txt
 COPY app/ /app
 WORKDIR /app
 
-EXPOSE 8765
-
 VOLUME ["/home/bitcoin/.bitcoin"]
 
 CMD ["python", "server.py", "--log", "/home/bitcoin/.bitcoin/testnet3/debug.log"]
